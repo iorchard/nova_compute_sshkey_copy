@@ -20,10 +20,14 @@ Edit roles/nova-compute-sshkey-copy/default/main.yml.::
 
 Change nova_gid, nova_uid, and nova_home for your environment.
 
-
 There is a sample inventory file - inventory.ini.sample.
 Copy and edit it for your environment.
-At least compute_node and admin_node groups should be defined.
+
+Assumption
+
+* admin node can log into compute nodes without password.
+* The user running the playbook has passwordless sudo privilege on admin node
+  and compute nodes.
 
 Run the playbook.::
 
