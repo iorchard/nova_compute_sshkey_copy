@@ -1,0 +1,6 @@
+---
+# defaults file for nova-compute-sshkey-copy
+nova_gid: 42436
+nova_uid: 42436
+nova_home: "/var/lib/nova"
+sshkey_dir: "/tmp/sshkey"

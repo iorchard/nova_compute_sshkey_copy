@@ -1,0 +1,48 @@
+---
+- name: Remove temporary directory for ssh keys.
+  file: 
+    path: "{{ sshkey_dir }}"
+    state: absent
+  when: inventory_hostname == groups['admin-node'][0]
+  become: yes
+
+- name: Create temporary directory for ssh keys.
+  file: 
+    path: "{{ sshkey_dir }}"
+    state: directory
+    mode: 0755
+  when: inventory_hostname == groups['admin-node'][0]
+
+- name: Create ssh key pair.
+  command: ssh-keygen -t rsa -f {{ sshkey_dir }}/id_rsa -N ''
+  when: inventory_hostname == groups['admin-node'][0]
+
+- name: Create authorized_keys from id_rsa.pub.
+  shell: cat {{ sshkey_dir }}/id_rsa.pub > {{ sshkey_dir }}/authorized_keys
+  when: inventory_hostname == groups['admin-node'][0]
+
+- name: Create ssh config file.
+  blockinfile:
+    path: "{{ sshkey_dir }}/config"
+    create: yes
+    mode: 0644
+    block: |
+      StrictHostKeyChecking no
+      UserKnownHostsFile /dev/null
+  when: inventory_hostname == groups['admin-node'][0]
+
+- name: Change permission of authorized_keys files
+  file:
+    path: "{{ sshkey_dir }}/authorized_keys"
+    mode: 0600
+  when: inventory_hostname == groups['admin-node'][0]
+
+- name: Copy ssh keys and config files to compute nodes.
+  copy:
+    src: "{{ sshkey_dir }}/"
+    dest: "{{ nova_home }}/.ssh/"
+    owner: nova
+    group: nova
+    mode: preserve
+  when: inventory_hostname in groups['compute-node']
+  become: yes

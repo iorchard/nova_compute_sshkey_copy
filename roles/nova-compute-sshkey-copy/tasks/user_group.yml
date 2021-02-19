@@ -1,0 +1,21 @@
+---
+# tasks file for nova-compute-sshkey-copy
+- name: Create nova group on compute nodes.
+  group:
+    name: nova
+    gid: "{{ nova_gid }}"
+    state: present
+  when: inventory_hostname in groups['compute-node']
+  become: yes
+
+- name: Create nova user on compute nodes.
+  user:
+    name: nova
+    uid: "{{ nova_uid }}"
+    group: nova
+    create_home: no
+    home: "{{ nova_home }}"
+    shell: /bin/bash
+    state: present
+  when: inventory_hostname in groups['compute-node']
+  become: yes

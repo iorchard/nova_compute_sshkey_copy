@@ -1,0 +1,63 @@
+taco-ctrl1 ip=192.168.21.101
+taco-ctrl2 ip=192.168.21.102
+taco-ctrl3 ip=192.168.21.103
+taco-comp1 ip=192.168.21.104
+taco-comp2 ip=192.168.21.105
+
+# Kubernetes cluster
+[kube-master]
+taco2-ctrl1
+taco2-ctrl2
+taco2-ctrl3
+
+[etcd]
+taco2-ctrl1
+taco2-ctrl2
+taco2-ctrl3
+
+[kube-node]
+taco2-ctrl1
+taco2-ctrl2
+taco2-ctrl3
+taco2-comp1
+taco2-comp2
+
+[k8s-cluster:children]
+kube-master
+kube-node
+
+[clients:children]
+k8s-cluster
+admin-node
+
+# OpenStack cluster
+[controller-node]
+taco2-ctrl1
+taco2-ctrl2
+taco2-ctrl3
+
+[compute-node]
+taco2-comp1
+taco2-comp2
+
+[controller-node:vars]
+node_labels={"openstack-control-plane":"enabled", "linuxbridge":"enabled"}
+
+[compute-node:vars]
+node_labels={"openstack-compute-node":"enabled", "linuxbridge":"enabled"}
+
+# TACO cluster
+[admin-node]
+taco2-ctrl1
+taco2-ctrl2
+taco2-ctrl3
+
+[taco:children]
+admin-node
+k8s-cluster
+
+# Container registry
+[container-registry]
+taco2-ctrl1
+taco2-ctrl2
+taco2-ctrl3

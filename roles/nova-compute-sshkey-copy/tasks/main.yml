@@ -1,0 +1,8 @@
+---
+- import_tasks: user_group.yml
+  when:
+    - inventory_hostname in groups['compute-node']
+  tags:
+    - user_group
+
+- import_tasks: sshkey.yml
