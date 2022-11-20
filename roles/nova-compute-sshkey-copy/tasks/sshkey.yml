@@ -52,4 +52,11 @@
     exclusive: true
   become: true
   when: inventory_hostname in groups['compute-node']
+
+- name: Remove temporary directory for ssh keys.
+  file: 
+    path: "{{ sshkey_dir }}"
+    state: absent
+  become: yes
+  delegate_to: localhost
 ...
