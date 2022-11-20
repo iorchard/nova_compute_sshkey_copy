@@ -2,6 +2,5 @@
 - name: Deploy ssh key pair in compute nodes.
   hosts:
     - compute-node
-    - admin-node
   roles:
-    - { role: nova-compute-sshkey-copy, tags: sshkey-copy }
+    - {role: nova-compute-sshkey-copy, tags: sshkey-copy}

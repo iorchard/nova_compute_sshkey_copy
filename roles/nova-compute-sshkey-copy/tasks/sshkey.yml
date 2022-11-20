@@ -3,39 +3,36 @@
   file: 
     path: "{{ sshkey_dir }}"
     state: absent
-  when: inventory_hostname == groups['admin-node'][0]
   become: yes
+  delegate_to: localhost
 
 - name: Create temporary directory for ssh keys.
   file: 
     path: "{{ sshkey_dir }}"
     state: directory
     mode: 0755
-  when: inventory_hostname == groups['admin-node'][0]
+  delegate_to: localhost
 
 - name: Create ssh key pair.
-  command: ssh-keygen -t rsa -f {{ sshkey_dir }}/id_rsa -N ''
-  when: inventory_hostname == groups['admin-node'][0]
-
-- name: Create authorized_keys from id_rsa.pub.
-  shell: cat {{ sshkey_dir }}/id_rsa.pub > {{ sshkey_dir }}/authorized_keys
-  when: inventory_hostname == groups['admin-node'][0]
+  community.crypto.openssh_keypair:
+    path: "{{ sshkey_dir }}/id_rsa"
+  delegate_to: localhost
 
 - name: Create ssh config file.
   blockinfile:
     path: "{{ sshkey_dir }}/config"
     create: yes
-    mode: 0644
+    mode: 0600
     block: |
       StrictHostKeyChecking no
       UserKnownHostsFile /dev/null
-  when: inventory_hostname == groups['admin-node'][0]
+  delegate_to: localhost
 
-- name: Change permission of authorized_keys files
-  file:
-    path: "{{ sshkey_dir }}/authorized_keys"
-    mode: 0600
-  when: inventory_hostname == groups['admin-node'][0]
+#- name: Change permission of authorized_keys files
+#  file:
+#    path: "{{ sshkey_dir }}/authorized_keys"
+#    mode: 0600
+#  when: inventory_hostname == groups['controller-node'][0]
 
 - name: Copy ssh keys and config files to compute nodes.
   copy:
@@ -44,5 +41,15 @@
     owner: nova
     group: nova
     mode: preserve
-  when: inventory_hostname in groups['compute-node']
   become: yes
+  when: inventory_hostname in groups['compute-node']
+
+- name: Add authorized_keys on compute nodes.
+  ansible.posix.authorized_key:
+    user: nova
+    state: present
+    key: "{{ lookup('file', '{{ sshkey_dir }}/id_rsa.pub') }}"
+    exclusive: true
+  become: true
+  when: inventory_hostname in groups['compute-node']
+...

@@ -25,9 +25,9 @@ Copy and edit it for your environment.
 
 Assumption
 
-* admin node can log into compute nodes without password.
-* The user running the playbook has passwordless sudo privilege on admin node
-  and compute nodes.
+* ansible deployer can log into compute nodes without password.
+* The user running the playbook has passwordless sudo privilege on ansible
+  deployer and compute nodes.
 
 Run the playbook.::
 

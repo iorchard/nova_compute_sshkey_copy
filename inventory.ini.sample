@@ -1,10 +1,6 @@
-controller ip=192.168.21.101
 compute1 ip=192.168.21.104
 compute2 ip=192.168.21.105
 
 [compute-node]
 compute1
 compute2
-
-[admin-node]
-controller
