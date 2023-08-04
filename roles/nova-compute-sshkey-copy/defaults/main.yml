@@ -4,3 +4,4 @@ nova_gid: 42424
 nova_uid: 42424
 nova_home: "/var/lib/nova"
 sshkey_dir: "/tmp/sshkey"
+ssh_port: 22

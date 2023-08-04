@@ -26,13 +26,8 @@
     block: |
       StrictHostKeyChecking no
       UserKnownHostsFile /dev/null
+      Port {{ ssh_port }}
   delegate_to: localhost
-
-#- name: Change permission of authorized_keys files
-#  file:
-#    path: "{{ sshkey_dir }}/authorized_keys"
-#    mode: 0600
-#  when: inventory_hostname == groups['controller-node'][0]
 
 - name: Copy ssh keys and config files to compute nodes.
   copy:
